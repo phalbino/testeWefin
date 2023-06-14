@@ -37,13 +37,22 @@ public class PessoaController {
             if (!service.pessoaPersistida(pessoaModel))
                 detalhes = "Usuario ja persistido, foi feita atualização no cadastro";
             service.savePessoa(pessoaModel);
+            if (!service.isCpf(pessoaModel) && pessoaModel.getTipoIdentificador().equals("CPF")) {
+                detalhes = "CPF digitado é invalido";
+                respostaChamada("CPF invalido", request, response, pessoaModel, detalhes);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+            if (!service.isCNPJ(pessoaModel) && pessoaModel.getTipoIdentificador().equals("CNPJ")) {
+                detalhes = "CNPJ digitado é invalido";
+                respostaChamada("CNPJ invalido", request, response, pessoaModel, detalhes);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
             if (pessoaModel.getTipoIdentificador().equals("Identificador invalido")) {
                 respostaChamada("Identificador invalido", request, response, pessoaModel, detalhes);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
 
             respostaChamada(SUCESSO, request, response, pessoaModel, detalhes);
-
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
